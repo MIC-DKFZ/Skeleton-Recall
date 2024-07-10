@@ -8,8 +8,8 @@ Welcome to the repository for the paper **"Skeleton Recall Loss for Connectivity
 ## News/Updates:
 
 - 📄 **7/24**: ECCV Acceptance
+- 🪧 **12/23**: MedNeurIPS poster
 - 🥇 **9/23**: Top solution without additional data on the [ToothFairy challenge](https://toothfairy.grand-challenge.org/)
-- 🪧 **8/23**: MedNeurIPS poster
 - 🥇 **7/23**: Skeleton Recall won the [TopCoW challenge](https://topcow23.grand-challenge.org/)
 
 ## Introduction
