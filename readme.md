@@ -37,7 +37,9 @@ In the code the Tubed Skeletonization is done during *dataloading*, see the [cod
 
 #### Full Loss calculation:
 
-$$\mathcal{L} = \mathcal{L}_{Dice} + \mathcal{L}_{CE} + w \cdot \mathcal{L}_{SkelRecall}$$
+```math
+\mathcal{L} = \mathcal{L}_{Dice} + \mathcal{L}_{CE} + w \cdot \mathcal{L}_{SkelRecall}
+```
 
 You can change the weight of the additional Skeleton Recall Loss term by modifying the value of  `self.weight_srec`  in the [nnUNetTrainerSkeletonRecall](nnunetv2/training/nnUNetTrainer/variants/loss/nnUNetTrainerSkeletonRecall.py)
 
