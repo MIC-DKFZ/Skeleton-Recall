@@ -38,7 +38,7 @@ You can change the weight of the additional Skeleton Recall Loss term by modifyi
 The method is validated on several public datasets featuring thin structures, including:
 - [**Roads**](https://www.kaggle.com/datasets/balraj98/massachusetts-roads-dataset): Aerial images of roads.
 - [**DRIVE**](https://drive.grand-challenge.org/): Retinal blood vessels.
-- **Cracks**: Concrete structure cracks.
+- [**Cracks**](https://zenodo.org/records/8215100): Concrete structure cracks.
 - [**ToothFairy**](https://toothfairy.grand-challenge.org/): Inferior Alveolar Canal in 3D.
 - [**TopCoW**](https://topcow23.grand-challenge.org/): Circle of Willis vessels in the brain.
 
