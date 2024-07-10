@@ -1,5 +1,5 @@
 import torch
-from nnunetv2.training.loss.dice import SoftDiceLoss, MemoryEfficientSoftDiceLoss
+from nnunetv2.training.loss.dice import SoftDiceLoss, MemoryEfficientSoftDiceLoss, SoftSkeletonRecallLoss
 from nnunetv2.training.loss.robust_ce_loss import RobustCrossEntropyLoss, TopKLoss
 from nnunetv2.utilities.helpers import softmax_helper_dim1
 from torch import nn
@@ -55,6 +55,47 @@ class DC_and_CE_loss(nn.Module):
         result = self.weight_ce * ce_loss + self.weight_dice * dc_loss
         return result
 
+class DC_SkelREC_and_CE_loss(nn.Module):
+    def __init__(self, soft_dice_kwargs, soft_skelrec_kwargs, ce_kwargs, weight_ce=1, weight_dice=1, weight_srec=1, 
+                 ignore_label=None, dice_class=MemoryEfficientSoftDiceLoss):
+        """
+        Weights for CE and Dice do not need to sum to one. You can set whatever you want.
+        :param soft_dice_kwargs:
+        :param soft_skelrec_kwargs:
+        :param ce_kwargs:
+        :param aggregate:
+        :param square_dice:
+        :param weight_ce:
+        :param weight_dice:
+        """
+        super(DC_SkelREC_and_CE_loss, self).__init__()
+
+        self.weight_dice = weight_dice
+        self.weight_ce = weight_ce
+        self.weight_srec = weight_srec
+        self.ignore_label = ignore_label
+
+        self.ce = RobustCrossEntropyLoss(**ce_kwargs)
+        self.dc = dice_class(apply_nonlin=softmax_helper_dim1, **soft_dice_kwargs)
+        self.srec = SoftSkeletonRecallLoss(apply_nonlin=softmax_helper_dim1, **soft_skelrec_kwargs)
+
+    def forward(self, net_output: torch.Tensor, target: torch.Tensor, skel: torch.Tensor):
+        """
+        target must be b, c, x, y(, z) with c=1
+        :param net_output:
+        :param target:
+        :return:
+        """
+
+        dc_loss = self.dc(net_output, target) \
+            if self.weight_dice != 0 else 0
+        srec_loss = self.srec(net_output, skel) \
+            if self.weight_srec != 0 else 0
+        ce_loss = (self.ce(net_output, target[:, 0].long())).mean() \
+            if self.weight_ce != 0 else 0
+
+        result = self.weight_ce * ce_loss + self.weight_dice * dc_loss + self.weight_srec * srec_loss
+        return result
 
 class DC_and_BCE_loss(nn.Module):
     def __init__(self, bce_kwargs, soft_dice_kwargs, weight_ce=1, weight_dice=1, use_ignore_label: bool = False,
