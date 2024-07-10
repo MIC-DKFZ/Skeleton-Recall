@@ -1,9 +1,16 @@
-# Skeleton Recall Loss for Connectivity Conserving and Resource Efficient Segmentation of Thin Tubular Structures 🩻
+# [ECCV 2024] Skeleton Recall Loss for Connectivity Conserving and Resource Efficient Segmentation of Thin Tubular Structures 🩻
 
 ## Overview
 Welcome to the repository for the paper **"Skeleton Recall Loss for Connectivity Conserving and Resource Efficient Segmentation of Thin Tubular Structures"**! 🎉 This repository provides the code for the implementation of the Skeleton Recall Loss integrated within the popular nnUNet framework.
 [![arXiv](https://img.shields.io/badge/arXiv-2404.03010-B31B1B.svg)](https://arxiv.org/abs/2404.03010)
 
+
+## News/Updates:
+
+- 📄 **7/24**: ECCV Acceptance
+- 🥇 **9/23**: Top solution without additional data on the [ToothFairy challenge](https://toothfairy.grand-challenge.org/)
+- 🪧 **8/23**: MedNeurIPS poster
+- 🥇 **7/23**: Skeleton Recall won the [TopCoW challenge](https://topcow23.grand-challenge.org/)
 
 ## Introduction
 Accurately segmenting thin tubular structures, such as vessels, nerves, roads, or cracks, is a crucial task in computer vision. Traditional deep learning-based segmentation approaches often struggle to preserve the connectivity of these structures. This paper introduces **Skeleton Recall Loss**, a novel loss function designed to enhance connectivity conservation in thin tubular structure segmentation without incurring massive computational overheads.
@@ -30,7 +37,7 @@ In the code the Tubed Skeletonization is done during *dataloading*, see the [cod
 
 #### Full Loss calculation:
 
-$\mathcal{L} = \mathcal{L}_{Dice} + \mathcal{L}_{CE} + w \cdot \mathcal{L}_{SkelRecall}$
+$$\mathcal{L} = \mathcal{L}_{Dice} + \mathcal{L}_{CE} + w \cdot \mathcal{L}_{SkelRecall}$$
 
 You can change the weight of the additional Skeleton Recall Loss term by modifying the value of  `self.weight_srec`  in the [nnUNetTrainerSkeletonRecall](nnunetv2/training/nnUNetTrainer/variants/loss/nnUNetTrainerSkeletonRecall.py)
 
