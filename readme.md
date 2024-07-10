@@ -22,40 +22,55 @@ The Skeleton Recall Loss operates by performing a tubed skeletonization on the g
 3. **Tubular Dilation**: Enlarge the skeleton using a dilation process to create a tubed skeleton.
 4. **Class Assignment**: For multi-class problems, assign parts of the skeleton to their respective classes.
 
-In the code the Tubed Skeletonization is done during dataloading, specifically here.
+In the code the Tubed Skeletonization is done during *dataloading*, see the [code](nnunetv2/training/data_augmentation/custom_transforms/skeletonization.py).
 
 ### Soft Recall Loss
-- **Soft Recall Calculation**: Compute the soft recall of the prediction on the precomputed tubed skeleton of the ground truth.
-- **Combination with Generic Loss**: Combine with other generic loss functions (e.g., Dice Loss, Cross Entropy Loss) to enhance segmentation performance.
+- **Soft Recall Calculation**: Compute the soft recall of the prediction on the precomputed tubed skeleton of the ground truth, see the [code](nnunetv2/training/loss/dice.py).
+- **Combination with Generic Loss**: Combine with other generic loss functions (e.g., Dice Loss, Cross Entropy Loss) to enhance segmentation performance,  see the [code](nnunetv2/training/loss/compound_losses.py).
+
+#### Full Loss calculation:
+
+$\mathcal{L} = \mathcal{L}_{Dice} + \mathcal{L}_{CE} + w \cdot \mathcal{L}_{SkelRecall}$
+
+You can change the weight of the additional Skeleton Recall Loss term by modifying the value of  `self.weight_srec`  in the [nnUNetTrainerSkeletonRecall](nnunetv2/training/nnUNetTrainer/variants/loss/nnUNetTrainerSkeletonRecall.py)
 
 ## Experimental Setup
 The method is validated on several public datasets featuring thin structures, including:
-- **Roads**: Aerial images of roads.
-- **DRIVE**: Retinal blood vessels.
+- [**Roads**](https://www.kaggle.com/datasets/balraj98/massachusetts-roads-dataset): Aerial images of roads.
+- [**DRIVE**](https://drive.grand-challenge.org/): Retinal blood vessels.
 - **Cracks**: Concrete structure cracks.
-- **ToothFairy**: Inferior Alveolar Canal in 3D.
-- **TopCoW**: Circle of Willis vessels in the brain.
+- [**ToothFairy**](https://toothfairy.grand-challenge.org/): Inferior Alveolar Canal in 3D.
+- [**TopCoW**](https://topcow23.grand-challenge.org/): Circle of Willis vessels in the brain.
 
 ## Usage
 ### Installation
+
+Check out the official [nnUNet installation instructions](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/installation_instructions.md)
+
+**TL;DR**
+
 Clone the repository and install the required dependencies:
 ```bash
-git clone https://github.com/your-username/skeleton-recall-loss.git
-cd skeleton-recall-loss
-pip install -r requirements.txt
+git clone https://github.com/MIC-DKFZ/skeleton-recall.git
+cd skeleton-recall
+pip install -e .
 ```
+nnU-Net needs to know where you intend to save raw data, preprocessed data and trained models. For this you need to set a few environment variables. Please follow the instructions [here](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/setting_up_paths.md).
+
 
 ### Training
 
 To train a model using Skeleton Recall Loss with nnUNet, run:
 
+for 2D:
 ```bash
-python train.py --dataset your-dataset --epochs 100
+nnUNetv2_train DATASET_NAME_OR_ID 2d FOLD -tr nnUNetTrainerSkeletonRecall
 ```
-### License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-Acknowledgements. We thank the contributors of the nnUNet framework and the community for their valuable feedback.
+for 3D:
+```bash
+nnUNetv2_train DATASET_NAME_OR_ID 3d_fullres FOLD -tr nnUNetTrainerSkeletonRecall
+```
 
 ## Citation
 
@@ -71,3 +86,12 @@ If you use this code in your research, please cite our paper:
 ```
 
 Happy coding! 🚀
+
+# Acknowledgements
+<img src="documentation/assets/HI_Logo.png" height="100px" />
+
+<img src="documentation/assets/dkfz_logo.png" height="100px" />
+
+nnU-Net is developed and maintained by the Applied Computer Vision Lab (ACVL) of [Helmholtz Imaging](http://helmholtz-imaging.de) 
+and the [Division of Medical Image Computing](https://www.dkfz.de/en/mic/index.php) at the 
+[German Cancer Research Center (DKFZ)](https://www.dkfz.de/en/index.html).
