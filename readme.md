@@ -68,6 +68,11 @@ pip install -e .
 nnU-Net needs to know where you intend to save raw data, preprocessed data and trained models. For this you need to set a few environment variables. Please follow the instructions [here](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/setting_up_paths.md).
 
 
+### Integration into existing nnUNet installation
+
+For now, if you'd like to incorporate Skeleton Recall Loss into your existing nnUNetv2 installation, you would first need copy the `nnUNetTrainerSkeletonRecall` class. You also have to integrate the skeletonization process during data loading, which you can find [here](https://github.com/MIC-DKFZ/Skeleton-Recall/blob/master/nnunetv2/training/data_augmentation/custom_transforms/skeletonization.py), as well as the custom loss function [here](https://github.com/MIC-DKFZ/Skeleton-Recall/blob/a01254d063a1c8f6de9de5ec82cf8d6e40eb651b/nnunetv2/training/loss/dice.py#L122) and the compound loss combination [here](https://github.com/MIC-DKFZ/Skeleton-Recall/blob/a01254d063a1c8f6de9de5ec82cf8d6e40eb651b/nnunetv2/training/loss/compound_losses.py#L58). Integration into the official nnUNet repo is currently discussed.
+
+
 ### Training
 
 To train a model using Skeleton Recall Loss with nnUNet, run:
