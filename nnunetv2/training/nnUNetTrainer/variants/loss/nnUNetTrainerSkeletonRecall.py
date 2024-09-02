@@ -2,6 +2,8 @@ import numpy as np
 import torch
 from torch import autocast
 from typing import Tuple, Union, List
+import warnings
+
 from nnunetv2.training.loss.compound_losses import DC_SkelREC_and_CE_loss
 from nnunetv2.training.loss.deep_supervision import DeepSupervisionWrapper
 from nnunetv2.training.loss.dice import MemoryEfficientSoftDiceLoss, get_tp_fp_fn_tn
@@ -44,6 +46,8 @@ class nnUNetTrainerSkeletonRecall(nnUNetTrainer):
         self.weight_srec = 1 # This is the default value, you can change it if you want
 
     def _build_loss(self):
+        if self.ignore_label is not None:
+            warnings.warn('Support for ignore label with Skeleton Recall is experimental and may not work as expected')
         loss = DC_SkelREC_and_CE_loss(soft_dice_kwargs={'batch_dice': self.configuration_manager.batch_dice, 
                                                         'smooth': 1e-5, 'do_bg': False, 'ddp': self.is_ddp}, 
                                       soft_skelrec_kwargs={'batch_dice': self.configuration_manager.batch_dice, 
