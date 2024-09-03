@@ -46,7 +46,7 @@ class nnUNetTrainerSkeletonRecall(nnUNetTrainer):
         self.weight_srec = 1 # This is the default value, you can change it if you want
 
     def _build_loss(self):
-        if self.ignore_label is not None:
+        if self.label_manager.ignore_label is not None:
             warnings.warn('Support for ignore label with Skeleton Recall is experimental and may not work as expected')
         loss = DC_SkelREC_and_CE_loss(soft_dice_kwargs={'batch_dice': self.configuration_manager.batch_dice, 
                                                         'smooth': 1e-5, 'do_bg': False, 'ddp': self.is_ddp}, 

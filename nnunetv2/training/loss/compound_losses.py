@@ -70,6 +70,8 @@ class DC_SkelREC_and_CE_loss(nn.Module):
         :param weight_dice:
         """
         super(DC_SkelREC_and_CE_loss, self).__init__()
+        if ignore_label is not None:
+            ce_kwargs['ignore_index'] = ignore_label
 
         self.weight_dice = weight_dice
         self.weight_ce = weight_ce
