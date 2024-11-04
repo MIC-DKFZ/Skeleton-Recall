@@ -2,6 +2,8 @@ import numpy as np
 import torch
 from torch import autocast
 from typing import Tuple, Union, List
+import warnings
+
 from nnunetv2.training.loss.compound_losses import DC_SkelREC_and_CE_loss
 from nnunetv2.training.loss.deep_supervision import DeepSupervisionWrapper
 from nnunetv2.training.loss.dice import MemoryEfficientSoftDiceLoss, get_tp_fp_fn_tn
@@ -37,13 +39,18 @@ from batchgeneratorsv2.transforms.utils.remove_label import RemoveLabelTansform
 from batchgeneratorsv2.transforms.utils.seg_to_regions import ConvertSegmentationToRegionsTransform
 from nnunetv2.training.data_augmentation.custom_transforms.skeletonization import SkeletonTransform
 
+
 class nnUNetTrainerSkeletonRecall(nnUNetTrainer):
     def __init__(self, plans: dict, configuration: str, fold: int, dataset_json: dict, unpack_dataset: bool = True,
                  device: torch.device = torch.device('cuda')):
         super().__init__(plans, configuration, fold, dataset_json, unpack_dataset, device)
         self.weight_srec = 1 # This is the default value, you can change it if you want
+        if self.label_manager.has_regions:
+            raise NotImplementedError("trainer not implemented for regions")
 
     def _build_loss(self):
+        if self.label_manager.ignore_label is not None:
+            warnings.warn('Support for ignore label with Skeleton Recall is experimental and may not work as expected')
         loss = DC_SkelREC_and_CE_loss(soft_dice_kwargs={'batch_dice': self.configuration_manager.batch_dice, 
                                                         'smooth': 1e-5, 'do_bg': False, 'ddp': self.is_ddp}, 
                                       soft_skelrec_kwargs={'batch_dice': self.configuration_manager.batch_dice, 

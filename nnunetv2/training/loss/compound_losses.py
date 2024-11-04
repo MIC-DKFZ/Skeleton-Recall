@@ -55,6 +55,7 @@ class DC_and_CE_loss(nn.Module):
         result = self.weight_ce * ce_loss + self.weight_dice * dc_loss
         return result
 
+
 class DC_SkelREC_and_CE_loss(nn.Module):
     def __init__(self, soft_dice_kwargs, soft_skelrec_kwargs, ce_kwargs, weight_ce=1, weight_dice=1, weight_srec=1, 
                  ignore_label=None, dice_class=MemoryEfficientSoftDiceLoss):
@@ -69,6 +70,8 @@ class DC_SkelREC_and_CE_loss(nn.Module):
         :param weight_dice:
         """
         super(DC_SkelREC_and_CE_loss, self).__init__()
+        if ignore_label is not None:
+            ce_kwargs['ignore_index'] = ignore_label
 
         self.weight_dice = weight_dice
         self.weight_ce = weight_ce
@@ -87,15 +90,30 @@ class DC_SkelREC_and_CE_loss(nn.Module):
         :return:
         """
 
-        dc_loss = self.dc(net_output, target) \
+        if self.ignore_label is not None:
+            assert target.shape[1] == 1, 'ignore label is not implemented for one hot encoded target variables ' \
+                                         '(DC_and_CE_loss)'
+            mask = target != self.ignore_label
+            # remove ignore label from target, replace with one of the known labels. It doesn't matter because we
+            # ignore gradients in those areas anyway
+            target_dice = torch.where(mask, target, 0)
+            target_skel = torch.where(mask, skel, 0)
+            num_fg = mask.sum()
+        else:
+            target_dice = target
+            target_skel = skel
+            mask = None
+
+        dc_loss = self.dc(net_output, target_dice, loss_mask=mask) \
             if self.weight_dice != 0 else 0
-        srec_loss = self.srec(net_output, skel) \
+        srec_loss = self.srec(net_output, target_skel, loss_mask=mask) \
             if self.weight_srec != 0 else 0
-        ce_loss = (self.ce(net_output, target[:, 0].long())).mean() \
-            if self.weight_ce != 0 else 0
+        ce_loss = self.ce(net_output, target[:, 0]) \
+            if self.weight_ce != 0 and (self.ignore_label is None or num_fg > 0) else 0
 
         result = self.weight_ce * ce_loss + self.weight_dice * dc_loss + self.weight_srec * srec_loss
         return result
+
 
 class DC_and_BCE_loss(nn.Module):
     def __init__(self, bce_kwargs, soft_dice_kwargs, weight_ce=1, weight_dice=1, use_ignore_label: bool = False,
