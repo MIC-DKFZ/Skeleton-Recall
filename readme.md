@@ -8,7 +8,7 @@ Welcome to the repository for the paper **"Skeleton Recall Loss for Connectivity
 
 ## News/Updates:
 
-- 📣 **11/24**: Best of ECCV by Voxel51. [Register here for the presentation! (21.11.2024)](https://voxel51.com/computer-vision-events/eccv-2024-redux-day-3-nov-21-2024/)
+- 📣 **11/24**: Best of ECCV by Voxel51. [Checkout the recording here!](https://youtu.be/3pPOJuO9bxs)
 - 👨‍🏫 **10/24**: ECCV Poster Presentation
 - 📄 **7/24**: ECCV Acceptance
 - 🪧 **12/23**: MedNeurIPS poster
