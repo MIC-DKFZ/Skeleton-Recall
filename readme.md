@@ -33,11 +33,11 @@ The Skeleton Recall Loss operates by performing a tubed skeletonization on the g
 3. **Tubular Dilation**: Enlarge the skeleton using a dilation process to create a tubed skeleton.
 4. **Class Assignment**: For multi-class problems, assign parts of the skeleton to their respective classes.
 
-In the code the Tubed Skeletonization is done during *dataloading*, see the [code](nnunetv2/training/data_augmentation/custom_transforms/skeletonization.py).
+In the code the Tubed Skeletonization is done during *dataloading*, see the [code](skeleton_recall/training/data_augmentation/skeletonization.py).
 
 ### Soft Recall Loss
-- **Soft Recall Calculation**: Compute the soft recall of the prediction on the precomputed tubed skeleton of the ground truth, see the [code](nnunetv2/training/loss/dice.py).
-- **Combination with Generic Loss**: Combine with other generic loss functions (e.g., Dice Loss, Cross Entropy Loss) to enhance segmentation performance,  see the [code](nnunetv2/training/loss/compound_losses.py).
+- **Soft Recall Calculation**: Compute the soft recall of the prediction on the precomputed tubed skeleton of the ground truth, see the [code](skeleton_recall/training/loss/dice.py).
+- **Combination with Generic Loss**: Combine with other generic loss functions (e.g., Dice Loss, Cross Entropy Loss) to enhance segmentation performance,  see the [code](skeleton_recall/training/loss/compound_losses.py).
 
 #### Full Loss calculation:
 
@@ -45,7 +45,7 @@ In the code the Tubed Skeletonization is done during *dataloading*, see the [cod
 \mathcal{L} = \mathcal{L}_{Dice} + \mathcal{L}_{CE} + w \cdot \mathcal{L}_{SkelRecall}
 ```
 
-You can change the weight of the additional Skeleton Recall Loss term by modifying the value of  `self.weight_srec`  in the [nnUNetTrainerSkeletonRecall](nnunetv2/training/nnUNetTrainer/variants/loss/nnUNetTrainerSkeletonRecall.py)
+You can change the weight of the additional Skeleton Recall Loss term by modifying the value of  `self.weight_srec`  in the [nnUNetTrainerSkeletonRecall](skeleton_recall/training/nnUNetTrainer/nnUNetTrainerSkeletonRecall.py)
 
 ## Experimental Setup
 The method is validated on several public datasets featuring thin structures, including:
@@ -68,12 +68,11 @@ git clone https://github.com/MIC-DKFZ/skeleton-recall.git
 cd skeleton-recall
 pip install -e .
 ```
+To let nnU-Net find the Skeleton Recall trainers, point the `nnUNet_extTrainer` environment variable to them:
+```bash
+export nnUNet_extTrainer=$(skeleton_recall_trainer_path)
+```
 nnU-Net needs to know where you intend to save raw data, preprocessed data and trained models. For this you need to set a few environment variables. Please follow the instructions [here](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/setting_up_paths.md).
-
-
-### Integration into existing nnUNet installation
-
-For now, if you'd like to incorporate Skeleton Recall Loss into your existing nnUNetv2 installation, you would first need copy the `nnUNetTrainerSkeletonRecall` class. You also have to integrate the skeletonization process during data loading, which you can find [here](https://github.com/MIC-DKFZ/Skeleton-Recall/blob/master/nnunetv2/training/data_augmentation/custom_transforms/skeletonization.py), as well as the custom loss function [here](https://github.com/MIC-DKFZ/Skeleton-Recall/blob/a01254d063a1c8f6de9de5ec82cf8d6e40eb651b/nnunetv2/training/loss/dice.py#L122) and the compound loss combination [here](https://github.com/MIC-DKFZ/Skeleton-Recall/blob/a01254d063a1c8f6de9de5ec82cf8d6e40eb651b/nnunetv2/training/loss/compound_losses.py#L58). Integration into the official nnUNet repo is currently discussed.
 
 
 ### Training
@@ -106,10 +105,6 @@ If you use this code in your research, please cite our paper:
 Happy coding! 🚀
 
 # Acknowledgements
-<img src="documentation/assets/HI_Logo.png" height="100px" />
-
 <img src="documentation/assets/dkfz_logo.png" height="100px" />
 
-nnU-Net is developed and maintained by the Applied Computer Vision Lab (ACVL) of [Helmholtz Imaging](http://helmholtz-imaging.de) 
-and the [Division of Medical Image Computing](https://www.dkfz.de/en/mic/index.php) at the 
-[German Cancer Research Center (DKFZ)](https://www.dkfz.de/en/index.html).
+Skeleton Recall was developed by the [Division of Medical Image Computing](https://www.dkfz.de/en/mic/index.php) at the [German Cancer Research Center (DKFZ)](https://www.dkfz.de/en/index.html).
