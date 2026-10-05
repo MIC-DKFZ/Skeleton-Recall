@@ -32,3 +32,4 @@ env/
 # Documentation assets: only explicitly listed files are tracked
 documentation/assets/*
 !documentation/assets/dkfz_logo.png
+!documentation/assets/skeletonrecall.webp

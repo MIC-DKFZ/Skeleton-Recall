@@ -1,5 +1,7 @@
 # [ECCV 2024] Skeleton Recall Loss for Connectivity Conserving and Resource Efficient Segmentation of Thin Tubular Structures 🩻
 
+![Skeleton Recall](documentation/assets/skeletonrecall.webp)
+
 ## Overview
 
 Welcome to the repository for the paper **"Skeleton Recall Loss for Connectivity Conserving and Resource Efficient Segmentation of Thin Tubular Structures"**! This repository provides the code for the implementation of the Skeleton Recall Loss integrated within the popular [nnUNet framework](https://github.com/MIC-DKFZ/nnUNet).
